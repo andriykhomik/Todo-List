@@ -4,7 +4,10 @@ const form = document.querySelector('form');
 
 const LSItems = JSON.parse(localStorage.getItem('todos'));
 
-LSItems.forEach(LSItem => createLi(LSItem));
+if (LSItems){
+    LSItems.forEach(LSItem => createLi(LSItem));
+}
+
 
 form.addEventListener('submit', (e)=> {
     e.preventDefault();
@@ -13,7 +16,6 @@ form.addEventListener('submit', (e)=> {
         createLi();
     }
 })
-
 
 
 function createLi(todo){
@@ -32,7 +34,8 @@ function createLi(todo){
         updateLS();
     })
 
-    todoEl.addEventListener('contextmenu', ()=>{
+    todoEl.addEventListener('contextmenu', (e)=>{
+        e.preventDefault();
         todoEl.remove();
         updateLS();
     })
@@ -58,8 +61,7 @@ function updateLS(){
             text: todoEl.innerText,
             completed: todoEl.classList.contains('completed')
         }
-
         todos.push(todo);
-        localStorage.setItem('todos', JSON.stringify(todos));
     })
+    localStorage.setItem('todos', JSON.stringify(todos));
 }
