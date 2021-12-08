@@ -2,65 +2,64 @@ const input = document.querySelector('#input');
 const todosUl = document.querySelector('.todos');
 const form = document.querySelector('form');
 
-const todos = JSON.parse(localStorage.getItem('todos'));
-console.log (todos);
+const LSItems = JSON.parse(localStorage.getItem('todos'));
 
-if (todos){
-    todos.forEach(todo => addTodo(todo));
-}
+LSItems.forEach(LSItem => createLi(LSItem));
 
-form.addEventListener('submit', (e)=>{
+form.addEventListener('submit', (e)=> {
     e.preventDefault();
-    addTodo();
+
+    if (input.value.trim()){
+        createLi();
+    }
 })
 
 
-function addTodo(todo){
-    let todoText = input.value;
+
+function createLi(todo){
+
+    let todoValue = input.value;
 
     if (todo){
-        todoText = todo.text;
+        todoValue = todo.text;
     }
 
-    if (todoText.trim()){
-        const liEl = document.createElement('li');
-        if (todo && todo.completed){
-            liEl.classList.add('completed');
-        }
-        liEl.innerText = todoText;
+    const todoEl = document.createElement('li');
+    todoEl.innerText = todoValue;
 
-        liEl.addEventListener('click', ()=> {
-            liEl.classList.toggle('completed');
-            updateLS();
-        })
-
-        liEl.addEventListener('contextmenu', (e)=> {
-            e.preventDefault();
-            liEl.remove();
-            updateLS();
-        })
-
-        todosUl.appendChild(liEl);
-        input.value = '';
-
+    todoEl.addEventListener('click', ()=> {
+        todoEl.classList.toggle('completed');
         updateLS();
-    }
-}
-
-
-function updateLS (){
-
-    const todos = [];
-    const todosEl = document.querySelectorAll('li');
-
-    todosEl.forEach(todoEl => {
-        todos.push({
-            text: todoEl.innerText,
-            completed: todoEl.classList.contains('completed')
-        })
     })
 
-    localStorage.setItem('todos', JSON.stringify(todos));
+    todoEl.addEventListener('contextmenu', ()=>{
+        todoEl.remove();
+        updateLS();
+    })
 
+    if (todo && todo.completed){
+        todoEl.classList.add('completed');
+    }
+
+    todosUl.appendChild(todoEl);
+    input.value = '';
+
+    updateLS();
 }
 
+
+function updateLS(){
+
+    const todos = [];
+    const todoEls = document.querySelectorAll('li');
+
+    todoEls.forEach(todoEl=> {
+        const todo = {
+            text: todoEl.innerText,
+            completed: todoEl.classList.contains('completed')
+        }
+
+        todos.push(todo);
+        localStorage.setItem('todos', JSON.stringify(todos));
+    })
+}
